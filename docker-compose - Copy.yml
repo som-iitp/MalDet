@@ -1,0 +1,37 @@
+version: "3.3"
+services:
+    tensorboard:
+        image: nsl-tensorboard
+        build:
+            context: ./
+            dockerfile: ./docker/tensorboard.Dockerfile
+        ports:
+            - 45170:45175
+        volumes:
+            - ./:/fl
+        command:
+            [
+                "tensorboard",
+                "--logdir=/fl/runs",
+                "--port=45170",
+                "--bind_all",
+            ]
+
+    jupyter-server:
+        image: nsl-jupyter
+        build:
+            context: ./
+            dockerfile: ./docker/jupyter.Dockerfile
+        ports:
+            - 42060:42065
+        volumes:
+            - ./:/fl
+        command:
+            [
+                "python3",
+                "fl/src/arg.py",
+                "-a=fl/apks/1.apk",
+                "-f=fl/src/dataset/final.csv",
+                "-m=fl/src/model/model.pkl",
+                "-s=fl/src/sig.txt"
+            ]
